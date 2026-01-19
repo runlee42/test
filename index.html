@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Məlumat Analizi Portalı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        
+        /* Стили для современного логотипа */
+        .brand-text {
+            background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-icon-glow {
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+        }
+
+        /* Стили для вкладок */
+        .tab-button {
+            position: relative;
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.1s ease;
+        }
+        
+        .tab-button:active {
+            transform: scale(0.95);
+        }
+
+        .tab-underline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background-color: #3b82f6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-button.inactive {
+            color: #6b7280;
+        }
+
+        .tab-button.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        /* Фиксация заголовков без зазоров */
+        #dataTable thead th {
+            position: sticky;
+            background-color: #f9fafb;
+            z-index: 20;
+            padding: 0; 
+            margin: 0;
+            border-bottom: none; 
+        }
+
+        #dataTable thead tr:nth-child(1) th {
+            top: 0;
+            height: 44px;
+        }
+        
+        .header-text-wrapper {
+            display: flex;
+            align-items: center;
+            height: 44px;
+            padding: 0 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        #dataTable thead tr:nth-child(2) th {
+            top: 44px; 
+            z-index: 19;
+            height: 40px;
+        }
+        
+        .filter-wrapper {
+            display: flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        #dataTable {
+            border-spacing: 0;
+            border-collapse: separate; 
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-900">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-30 border-b border-gray-100">
+        <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Modern Logo / Title -->
+            <div class="flex items-center gap-3 group cursor-default">
+                <div class="bg-blue-600 p-2 rounded-lg brand-icon-glow transition-transform group-hover:rotate-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black uppercase tracking-tighter brand-text">
+                        2 saylı TND <span class="font-light text-slate-400">YSMŞ</span>
+                    </h1>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] leading-none">Məlumat Analizi Portalı</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] uppercase text-gray-400 font-bold tracking-wider">Tarix aralığı</span>
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span id="last-update" class="text-sm font-medium text-gray-600 italic">Загрузка...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="relative flex justify-center mt-0 bg-white px-4 border-t border-gray-50">
+            <div class="relative flex">
+                <button onclick="switchTab('yanacaq')" id="btn-yanacaq" class="tab-button px-10 py-4 active text-sm uppercase tracking-widest">
+                    Yanacaq
+                </button>
+                <button onclick="switchTab('gps')" id="btn-gps" class="tab-button px-10 py-4 inactive text-sm uppercase tracking-widest">
+                    GPS
+                </button>
+                <div id="tab-indicator" class="tab-underline"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-full mx-auto px-4 py-6">
+        
+        <!-- Statistics Summary Cards -->
+        <div id="statsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <!-- Stats will be injected here -->
+        </div>
+
+        <!-- Search & Refresh Area -->
+        <div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="relative w-full md:max-w-md">
+                <input type="text" id="globalSearch" placeholder="Умный поиск по всем параметрам..." 
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none shadow-sm transition-all"
+                    onkeyup="applyAllFilters(true)">
+                <div class="absolute left-3 top-3 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <button onclick="refreshCurrentTab()" class="group flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm hover:shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357-2H15" />
+                </svg>
+                <span class="font-medium">Məlumatları yenilə</span>
+            </button>
+        </div>
+
+        <!-- Table Container -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
+            <div class="overflow-x-auto overflow-y-auto max-h-[70vh]" id="tableScrollArea">
+                <table class="w-full text-left border-collapse" id="dataTable">
+                    <thead id="tableHeader" class="bg-gray-50/80"></thead>
+                    <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+            <!-- Pagination Footer -->
+            <div id="paginationContainer" class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
+                <!-- Pagination info will be injected here -->
+            </div>
+        </div>
+
+        <div id="loader" class="hidden py-20 text-center">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="mt-4 text-gray-500 font-medium">Обработка потока данных...</p>
+        </div>
+
+        <div id="errorMessage" class="hidden py-20 text-center text-red-500 font-medium bg-white rounded-2xl shadow-sm border border-red-50 mt-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            Ошибка подключения к источнику данных.
+        </div>
+    </main>
+
+    <script>
+        let rawHeaders = [];
+        let currentData = [];
+        let filteredData = [];
+        let activeTab = 'yanacaq';
+        
+        let currentPage = 1;
+        const rowsPerPage = 50;
+
+        window.onload = () => {
+            updateTabIndicator();
+            switchTab('yanacaq');
+        };
+
+        async function fetchLastUpdate() {
+            try {
+                const response = await fetch(`date.txt?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error();
+                const dateText = await response.text();
+                document.getElementById('last-update').textContent = dateText.trim() || '—';
+            } catch (e) {
+                document.getElementById('last-update').textContent = '—';
+            }
+        }
+
+        function refreshCurrentTab() {
+            switchTab(activeTab);
+        }
+
+        function clearTable() {
+            rawHeaders = [];
+            currentData = [];
+            filteredData = [];
+            currentPage = 1;
+            document.getElementById('tableHeader').innerHTML = '';
+            document.getElementById('tableBody').innerHTML = '';
+            document.getElementById('statsContainer').innerHTML = '';
+            document.getElementById('paginationContainer').innerHTML = '';
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function updateTabIndicator() {
+            const activeBtn = document.getElementById(activeTab === 'yanacaq' ? 'btn-yanacaq' : 'btn-gps');
+            const indicator = document.getElementById('tab-indicator');
+            if (activeBtn && indicator) {
+                indicator.style.left = activeBtn.offsetLeft + 'px';
+                indicator.style.width = activeBtn.offsetWidth + 'px';
+            }
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            
+            const btnYanacaq = document.getElementById('btn-yanacaq');
+            const btnGps = document.getElementById('btn-gps');
+            
+            if (tab === 'yanacaq') {
+                btnYanacaq.classList.replace('inactive', 'active');
+                btnGps.classList.replace('active', 'inactive');
+            } else {
+                btnGps.classList.replace('inactive', 'active');
+                btnYanacaq.classList.replace('active', 'inactive');
+            }
+            
+            updateTabIndicator();
+            document.getElementById('globalSearch').value = '';
+            
+            clearTable();
+            fetchLastUpdate();
+            loadCSVData(tab === 'yanacaq' ? 'yanacaq.csv' : 'gps.csv');
+        }
+
+        window.onresize = updateTabIndicator;
+
+        function processCSVText(text) {
+            const tableBody = document.getElementById('tableBody');
+            const tableHeader = document.getElementById('tableHeader');
+
+            const rows = text.split(/\r?\n/).filter(row => row.trim() !== '');
+            if (rows.length === 0) {
+                tableBody.innerHTML = '<tr><td class="px-6 py-10 text-center text-gray-400">Файл пуст или недоступен</td></tr>';
+                return;
+            }
+
+            const firstRow = rows[0];
+            const delimiter = firstRow.includes(';') ? ';' : ',';
+
+            rawHeaders = firstRow.split(delimiter).map(h => h.trim());
+            currentData = rows.slice(1).map(row => {
+                const cols = row.split(delimiter).map(cell => cell.trim());
+                while(cols.length < rawHeaders.length) cols.push('');
+                return cols;
+            });
+
+            let headerTitleRow = '<tr>';
+            let headerFilterRow = '<tr>';
+
+            rawHeaders.forEach((h, index) => {
+                headerTitleRow += `
+                    <th class="border-r border-gray-100 min-w-[140px]">
+                        <div class="header-text-wrapper text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            ${h}
+                        </div>
+                    </th>`;
+                headerFilterRow += `
+                    <th class="border-r border-gray-100 bg-gray-50/50">
+                        <div class="filter-wrapper">
+                            <input type="text" 
+                                   placeholder="Фильтр..." 
+                                   class="column-filter w-full px-3 py-1.5 text-[11px] border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/10 focus:border-blue-400 focus:outline-none bg-white transition-all font-medium"
+                                   data-col-index="${index}"
+                                   onkeyup="applyAllFilters(true)">
+                        </div>
+                    </th>`;
+            });
+
+            headerTitleRow += '</tr>';
+            headerFilterRow += '</tr>';
+            tableHeader.innerHTML = headerTitleRow + headerFilterRow;
+
+            applyAllFilters(true);
+        }
+
+        async function loadCSVData(fileName) {
+            const loader = document.getElementById('loader');
+            const tableBody = document.getElementById('tableBody');
+            const errorDiv = document.getElementById('errorMessage');
+            
+            loader.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${fileName}?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('File not found');
+                const text = await response.text();
+                processCSVText(text);
+            } catch (e) {
+                tableBody.innerHTML = `<tr><td class="px-6 py-10 text-center text-gray-400 italic font-medium">Ошибка загрузки источника данных.</td></tr>`;
+                errorDiv.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        function formatValueNoRounding(num) {
+            if (isNaN(num)) return "0.00";
+            const truncated = Math.floor(num * 100) / 100;
+            return truncated.toFixed(2);
+        }
+
+        function updateStatistics(data) {
+            const statsContainer = document.getElementById('statsContainer');
+            statsContainer.innerHTML = '';
+
+            if (activeTab === 'yanacaq') {
+                let totalAzn = 0;
+                let totalLiters = 0;
+
+                const aznIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('azn') || h.toLowerCase().includes('сумма')) !== -1 
+                                ? rawHeaders.findIndex(h => h.toLowerCase().includes('azn') || h.toLowerCase().includes('сумма')) : 4;
+                const litIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('литр') || h.toLowerCase().includes('lt')) !== -1 
+                                ? rawHeaders.findIndex(h => h.toLowerCase().includes('литр') || h.toLowerCase().includes('lt')) : 3;
+
+                data.forEach(row => {
+                    const valAzn = parseFloat(String(row[aznIdx]).replace(',', '.')) || 0;
+                    const valLit = parseFloat(String(row[litIdx]).replace(',', '.')) || 0;
+                    totalAzn += valAzn;
+                    totalLiters += valLit;
+                });
+
+                statsContainer.innerHTML = `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-emerald-500">
+                        <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">ÜMUMİ MƏBLƏĞ (AZN)</p>
+                        <p class="text-2xl font-black text-slate-800">${formatValueNoRounding(totalAzn)} <span class="text-sm font-medium text-slate-400">₼</span></p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-blue-500">
+                        <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">TOPLAM LİTR (Liters)</p>
+                        <p class="text-2xl font-black text-slate-800">${formatValueNoRounding(totalLiters)} <span class="text-sm font-medium text-slate-400">L</span></p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-amber-500">
+                        <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">TRANZAKSİYA</p>
+                        <p class="text-2xl font-black text-slate-800">${data.length} <span class="text-sm font-medium text-slate-400">ədəd</span></p>
+                    </div>
+                `;
+            } else {
+                let totalKm = 0;
+                const kmIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('km') || h.toLowerCase().includes('км') || h.toLowerCase().includes('пробег')) !== -1 
+                               ? rawHeaders.findIndex(h => h.toLowerCase().includes('km') || h.toLowerCase().includes('км') || h.toLowerCase().includes('пробег')) : 2;
+
+                data.forEach(row => {
+                    const valKm = parseFloat(String(row[kmIdx]).replace(',', '.')) || 0;
+                    totalKm += valKm;
+                });
+
+                statsContainer.innerHTML = `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-t-4 border-t-indigo-500 md:col-span-3">
+                        <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Дистанция за период (KM)</p>
+                        <p class="text-3xl font-black text-slate-800">${formatValueNoRounding(totalKm)} <span class="text-lg font-medium text-slate-400">KM</span></p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderRows(data) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                const colSpan = rawHeaders.length || 1;
+                tableBody.innerHTML = `<tr><td colspan="${colSpan}" class="px-6 py-12 text-center text-gray-400 bg-gray-50/30 font-medium">Нет данных, соответствующих критериям фильтрации</td></tr>`;
+                renderPagination(0);
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const pageData = data.slice(startIndex, endIndex);
+
+            pageData.forEach(row => {
+                let rowHtml = '<tr class="group hover:bg-blue-50/40 transition-colors border-b border-gray-50 last:border-0">';
+                row.forEach((cell, idx) => {
+                    if (idx < rawHeaders.length) {
+                        rowHtml += `<td class="px-4 py-3.5 text-sm text-slate-600 whitespace-nowrap border-r border-gray-50/50 last:border-0 group-hover:text-slate-900">${cell}</td>`;
+                    }
+                });
+                rowHtml += '</tr>';
+                tableBody.insertAdjacentHTML('beforeend', rowHtml);
+            });
+
+            renderPagination(data.length);
+        }
+
+        function renderPagination(totalRows) {
+            const container = document.getElementById('paginationContainer');
+            if (totalRows <= rowsPerPage) {
+                container.innerHTML = `<div class="text-[11px] text-gray-400 uppercase font-bold tracking-widest">Всего результатов: ${totalRows}</div>`;
+                return;
+            }
+
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            const startRange = (currentPage - 1) * rowsPerPage + 1;
+            const endRange = Math.min(currentPage * rowsPerPage, totalRows);
+
+            container.innerHTML = `
+                <div class="flex-1 flex justify-between items-center w-full">
+                    <div class="text-xs text-slate-500 font-medium">
+                        Показано <span class="text-slate-800 font-bold">${startRange}-${endRange}</span> из <span class="text-slate-800 font-bold">${totalRows}</span>
+                    </div>
+                    <div class="inline-flex gap-2">
+                        <button onclick="changePage(${currentPage - 1})" 
+                                ${currentPage === 1 ? 'disabled' : ''} 
+                                class="px-4 py-1.5 border border-gray-200 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm">
+                            ПРЕД
+                        </button>
+                        <span class="px-4 py-1.5 text-xs font-black bg-blue-600 text-white rounded-lg shadow-md shadow-blue-200">
+                            ${currentPage}
+                        </span>
+                        <button onclick="changePage(${currentPage + 1})" 
+                                ${currentPage === totalPages ? 'disabled' : ''} 
+                                class="px-4 py-1.5 border border-gray-200 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm">
+                            СЛЕД
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderRows(filteredData);
+            document.getElementById('tableScrollArea').scrollTop = 0;
+        }
+
+        function applyAllFilters(resetPage = false) {
+            if (resetPage) currentPage = 1;
+
+            const globalQuery = document.getElementById('globalSearch').value.toLowerCase();
+            const colFilters = Array.from(document.querySelectorAll('.column-filter')).map(input => ({
+                index: parseInt(input.dataset.colIndex),
+                value: input.value.toLowerCase()
+            }));
+
+            filteredData = currentData.filter(row => {
+                const matchesGlobal = globalQuery === '' || row.some(cell => cell.toLowerCase().includes(globalQuery));
+                const matchesColumns = colFilters.every(filter => {
+                    if (filter.value === '') return true;
+                    const cellValue = row[filter.index] ? row[filter.index].toLowerCase() : '';
+                    return cellValue.includes(filter.value);
+                });
+                return matchesGlobal && matchesColumns;
+            });
+
+            updateStatistics(filteredData);
+            renderRows(filteredData);
+        }
+    </script>
+</body>
+</html>
