@@ -28,6 +28,13 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
+        /* Glass effect for login */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
         .brand-text {
             background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
             -webkit-background-clip: text;
@@ -59,19 +66,8 @@
             border-radius: 3px 3px 0 0;
         }
 
-        .sticky-header th {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: #f8fafc;
-        }
-
-        .filter-header th {
-            position: sticky;
-            top: 44px;
-            z-index: 19;
-            background: #f8fafc;
-        }
+        .sticky-header th { position: sticky; top: 0; z-index: 20; background: #f8fafc; }
+        .filter-header th { position: sticky; top: 44px; z-index: 19; background: #f8fafc; }
 
         .table-container {
             max-height: calc(100vh - 420px);
@@ -85,115 +81,233 @@
             -webkit-appearance: none; 
             margin: 0; 
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen text-slate-900">
+<body class="bg-[#f8fafc] min-h-screen text-slate-900 overflow-x-hidden">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
-        <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4 logo-container cursor-pointer group">
-                <div class="logo-icon bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-100 flex items-center justify-center p-6 hidden">
+        <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(#2563eb 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+        
+        <div class="w-full max-w-[420px] relative animate-fade">
+            <!-- Brand Mark -->
+            <div class="flex justify-center mb-8">
+                <div class="bg-blue-600 p-5 rounded-[2rem] shadow-2xl shadow-blue-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </div>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-black uppercase tracking-tight brand-text">
-                        2 saylı TND <span class="font-light text-slate-400">YSMŞ</span>
-                    </h1>
-                    <div class="flex items-center gap-2">
-                        <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Məlumat Analizi Portalı</p>
-                    </div>
+            </div>
+
+            <div class="glass-panel p-10 rounded-[2.5rem] shadow-xl border border-white">
+                <div class="text-center mb-10">
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">Sistemə Giriş</h1>
+                    <p class="text-slate-500 text-xs mt-2 font-bold uppercase tracking-widest">2 Saylı TND Analitika Portalı</p>
                 </div>
-            </div>
 
-            <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex flex-col items-end">
-                <span class="text-[9px] uppercase text-slate-400 font-black tracking-tighter">Yenilənmə Tarixi</span>
-                <span id="last-update" class="text-sm font-bold text-slate-700">Yüklənir...</span>
+                <form onsubmit="handleLogin(event)" class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Giriş Şifrəsi</label>
+                        <input type="password" id="passInput" required placeholder="••••••••"
+                            class="w-full px-5 py-4 bg-white/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:outline-none transition-all text-center tracking-[0.3em] font-bold">
+                    </div>
+
+                    <div class="flex items-center justify-between px-1">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" id="rememberMe" class="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
+                            <span class="text-xs font-bold text-slate-500 group-hover:text-slate-700 transition-colors uppercase tracking-tighter">24 saat xatırla</span>
+                        </label>
+                    </div>
+
+                    <div id="loginError" class="hidden py-3 px-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-black text-center uppercase tracking-widest">
+                        Yanlış Şifrə!
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]">
+                        Daxil Ol
+                    </button>
+                </form>
             </div>
+            
+            <p class="text-center mt-10 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                &copy; 2024 TND ANALİTİKA SİSTEMİ
+            </p>
         </div>
+    </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="flex justify-center border-t border-slate-100 relative">
-            <div class="flex relative overflow-x-auto no-scrollbar">
-                <button onclick="switchTab('yanacaq')" id="btn-yanacaq" class="tab-button px-8 md:px-12 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 whitespace-nowrap">
-                    Yanacaq
-                </button>
-                <button onclick="switchTab('gps')" id="btn-gps" class="tab-button px-8 md:px-12 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 whitespace-nowrap">
-                    GPS
-                </button>
-                <div id="tab-indicator" class="tab-underline"></div>
-            </div>
-        </nav>
-    </header>
-
-    <main class="max-w-full mx-auto px-4 md:px-6 py-8">
-        <!-- Dashboard Stats -->
-        <div id="statsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8"></div>
-
-        <!-- Toolbar & Search -->
-        <div class="mb-6 flex flex-col gap-4">
-            <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
-                <!-- Global Search -->
-                <div class="relative flex-grow lg:max-w-xl">
-                    <input type="text" id="globalSearch" placeholder="Axtarış..." 
-                        class="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:outline-none shadow-sm transition-all text-sm"
-                        onkeyup="applyAllFilters(true)">
-                    <div class="absolute left-4 top-4 text-slate-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <!-- MAIN APP CONTAINER -->
+    <div id="main-app" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+            <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4 logo-container cursor-pointer group">
+                    <div class="logo-icon bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-black uppercase tracking-tight brand-text">
+                            2 saylı TND <span class="font-light text-slate-400">YSMŞ</span>
+                        </h1>
+                        <div class="flex items-center gap-2">
+                            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Məlumat Analizi Portalı</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Day Only Range Filter -->
-                <div class="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm items-center">
-                    <div class="flex items-center gap-2 px-2">
-                        <span class="text-[9px] font-black text-slate-400 uppercase whitespace-nowrap">Gün axtarışı:</span>
+                <div class="flex items-center gap-4">
+                    <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex flex-col items-end">
+                        <span class="text-[9px] uppercase text-slate-400 font-black tracking-tighter">Yenilənmə Tarixi</span>
+                        <span id="last-update" class="text-sm font-bold text-slate-700">Yüklənir...</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 w-full sm:w-32">
-                        <input type="number" id="dayStart" min="1" max="31" placeholder="İlk" oninput="applyAllFilters(true)" 
-                            class="px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none w-full text-center">
-                        <input type="number" id="dayEnd" min="1" max="31" placeholder="Son" oninput="applyAllFilters(true)" 
-                            class="px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none w-full text-center">
-                    </div>
-                    <button onclick="clearDayFilter()" class="hidden sm:flex p-2 text-slate-300 hover:text-red-500 transition-colors" title="Sıfırla">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <button onclick="logout()" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="Çıxış">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                     </button>
                 </div>
-
-                <button onclick="refreshCurrentTab()" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357-2H15" />
-                    </svg>
-                    Yenilə
-                </button>
             </div>
-        </div>
 
-        <!-- Table UI -->
-        <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden flex flex-col">
-            <div class="overflow-auto table-container" id="tableScrollArea">
-                <table class="w-full border-separate border-spacing-0" id="dataTable">
-                    <thead id="tableHeader"></thead>
-                    <tbody id="tableBody" class="text-slate-600"></tbody>
-                </table>
-                <div id="loader" class="hidden py-32 text-center">
-                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-[3px] border-blue-600 border-t-transparent"></div>
+            <nav class="flex justify-center border-t border-slate-100 relative">
+                <div class="flex relative overflow-x-auto no-scrollbar">
+                    <button onclick="switchTab('yanacaq')" id="btn-yanacaq" class="tab-button px-8 md:px-12 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 whitespace-nowrap">
+                        Yanacaq
+                    </button>
+                    <button onclick="switchTab('gps')" id="btn-gps" class="tab-button px-8 md:px-12 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 whitespace-nowrap">
+                        GPS
+                    </button>
+                    <div id="tab-indicator" class="tab-underline"></div>
                 </div>
-                <div id="emptyState" class="hidden py-32 text-center">
-                    <p class="text-slate-400 font-medium italic">Məlumat tapılmadı</p>
+            </nav>
+        </header>
+
+        <main class="max-w-full mx-auto px-4 md:px-6 py-8 animate-fade">
+            <div id="statsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8"></div>
+
+            <div class="mb-6 flex flex-col gap-4">
+                <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
+                    <div class="relative flex-grow lg:max-w-xl">
+                        <input type="text" id="globalSearch" placeholder="Axtarış..." 
+                            class="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:outline-none shadow-sm transition-all text-sm"
+                            onkeyup="applyAllFilters(true)">
+                        <div class="absolute left-4 top-4 text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm items-center">
+                        <div class="flex items-center gap-2 px-2">
+                            <span class="text-[9px] font-black text-slate-400 uppercase whitespace-nowrap">Gün axtarışı:</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 w-full sm:w-32">
+                            <input type="number" id="dayStart" min="1" max="31" placeholder="İlk" oninput="applyAllFilters(true)" 
+                                class="px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none w-full text-center">
+                            <input type="number" id="dayEnd" min="1" max="31" placeholder="Son" oninput="applyAllFilters(true)" 
+                                class="px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none w-full text-center">
+                        </div>
+                        <button onclick="clearDayFilter()" class="hidden sm:flex p-2 text-slate-300 hover:text-red-500 transition-colors" title="Sıfırla">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <button onclick="refreshCurrentTab()" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357-2H15" />
+                        </svg>
+                        Yenilə
+                    </button>
                 </div>
             </div>
-            <div id="paginationContainer" class="px-8 py-5 bg-slate-50 border-t border-slate-100"></div>
-        </div>
-    </main>
+
+            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden flex flex-col">
+                <div class="overflow-auto table-container" id="tableScrollArea">
+                    <table class="w-full border-separate border-spacing-0" id="dataTable">
+                        <thead id="tableHeader"></thead>
+                        <tbody id="tableBody" class="text-slate-600"></tbody>
+                    </table>
+                    <div id="loader" class="hidden py-32 text-center">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-[3px] border-blue-600 border-t-transparent"></div>
+                    </div>
+                    <div id="emptyState" class="hidden py-32 text-center">
+                        <p class="text-slate-400 font-medium italic">Məlumat tapılmadı</p>
+                    </div>
+                </div>
+                <div id="paginationContainer" class="px-8 py-5 bg-slate-50 border-t border-slate-100"></div>
+            </div>
+        </main>
+    </div>
 
     <script>
+        // --- AUTH SYSTEM ---
+        const MASTER_KEY = "12345"; // Ваш пароль
+        const AUTH_KEY = "tnd_session_active";
+        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+        function checkAuth() {
+            const loginScr = document.getElementById('login-screen');
+            const mainApp = document.getElementById('main-app');
+            
+            // Check persistence
+            const saved = localStorage.getItem(AUTH_KEY);
+            if (saved) {
+                const session = JSON.parse(saved);
+                if (Date.now() - session.time < SESSION_DURATION) {
+                    initApp();
+                    return;
+                } else {
+                    localStorage.removeItem(AUTH_KEY);
+                }
+            }
+
+            // Check tab session
+            if (sessionStorage.getItem(AUTH_KEY)) {
+                initApp();
+                return;
+            }
+
+            loginScr.classList.remove('hidden');
+            mainApp.classList.add('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('passInput').value;
+            const remember = document.getElementById('rememberMe').checked;
+            const err = document.getElementById('loginError');
+
+            if (pass === MASTER_KEY) {
+                if (remember) {
+                    localStorage.setItem(AUTH_KEY, JSON.stringify({ auth: true, time: Date.now() }));
+                } else {
+                    sessionStorage.setItem(AUTH_KEY, "true");
+                }
+                initApp();
+            } else {
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 2500);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem(AUTH_KEY);
+            sessionStorage.removeItem(AUTH_KEY);
+            location.reload();
+        }
+
+        // --- APP CORE ---
         let rawHeaders = [];
         let currentData = [];
         let filteredData = [];
@@ -201,10 +315,12 @@
         let currentPage = 1;
         const rowsPerPage = 50;
 
-        window.onload = () => {
+        function initApp() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
             updateTabIndicator();
             switchTab('yanacaq');
-        };
+        }
 
         async function fetchLastUpdate() {
             const el = document.getElementById('last-update');
@@ -215,9 +331,6 @@
             } catch (e) { el.textContent = '—'; }
         }
 
-        /**
-         * Rəqəmləri vergül formatına çevirir (məs: 12.50 -> 12,50)
-         */
         function formatToComma(value) {
             if (value === null || value === undefined || value === '') return '';
             const num = parseFloat(String(value).replace(',', '.'));
@@ -301,10 +414,8 @@
         function applyAllFilters(reset = false) {
             if (reset) currentPage = 1;
             const query = document.getElementById('globalSearch').value.toLowerCase();
-            
             const dayStart = parseInt(document.getElementById('dayStart').value) || null;
             const dayEnd = parseInt(document.getElementById('dayEnd').value) || null;
-
             const colFilters = Array.from(document.querySelectorAll('.column-filter')).map(i => ({
                 idx: parseInt(i.dataset.col),
                 val: i.value.toLowerCase()
@@ -322,9 +433,7 @@
                     if (rowDay !== null) {
                         if (dayStart !== null && rowDay < dayStart) matchDay = false;
                         if (dayEnd !== null && rowDay > dayEnd) matchDay = false;
-                    } else {
-                        matchDay = false;
-                    }
+                    } else { matchDay = false; }
                 }
                 return matchGlobal && matchCols && matchDay;
             });
@@ -347,24 +456,21 @@
                                      createStatCard('Yanacaq', formatToComma(totalLit), 'L', 'border-blue-500') +
                                      createStatCard('Sayı', data.length, 'ədəd', 'border-amber-500');
             } else {
-                let totalKm = 0;
-                let totalMoto = 0;
+                let totalKm = 0, totalMoto = 0;
                 const kmIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'km' || h.toLowerCase().includes('məsafə'));
                 const motoIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'moto' || h.toLowerCase().includes('saat'));
-                
                 data.forEach(row => {
                     if (kmIdx !== -1) totalKm += parseFloat(String(row[kmIdx]).replace(',', '.')) || 0;
                     if (motoIdx !== -1) totalMoto += parseFloat(String(row[motoIdx]).replace(',', '.')) || 0;
                 });
-
                 container.innerHTML = createStatCard('Sayı', data.length, 'ədəd', 'border-slate-500') +
                                      createStatCard('Cəmi KM', formatToComma(totalKm), 'KM', 'border-indigo-500') +
                                      createStatCard('Cəmi Moto', formatToComma(totalMoto), 'Saat', 'border-orange-500');
             }
         }
 
-        function createStatCard(label, val, unit, color, span = '') {
-            return `<div class="bg-white p-5 rounded-2xl border-b-4 ${color} shadow-sm ${span}">
+        function createStatCard(label, val, unit, color) {
+            return `<div class="bg-white p-5 rounded-2xl border-b-4 ${color} shadow-sm">
                 <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${label}</h4>
                 <div class="flex items-baseline gap-1"><span class="text-xl font-black text-slate-800">${val}</span><span class="text-[9px] font-bold text-slate-400 uppercase">${unit}</span></div>
             </div>`;
@@ -385,15 +491,10 @@
                     if (i < rawHeaders.length) {
                         const td = document.createElement('td');
                         td.className = 'px-4 py-3 text-[11px] border-b border-r border-slate-100 whitespace-nowrap';
-                        
                         const header = rawHeaders[i].toLowerCase();
-                        // Format numbers with comma for specific columns
                         if (header.includes('lit') || header.includes('azn') || header.includes('miqdar') || header.includes('məbləğ') || header === 'km' || header === 'moto') {
                             td.textContent = formatToComma(cell);
-                        } else {
-                            td.textContent = cell;
-                        }
-                        
+                        } else { td.textContent = cell; }
                         tr.appendChild(td);
                     }
                 });
@@ -419,6 +520,9 @@
         function changePage(p) { currentPage = p; renderTable(filteredData); document.getElementById('tableScrollArea').scrollTop = 0; }
         function refreshCurrentTab() { switchTab(activeTab); }
         window.onresize = updateTabIndicator;
+
+        // Run security check on load
+        window.onload = checkAuth;
     </script>
 </body>
 </html>
