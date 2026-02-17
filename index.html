@@ -28,12 +28,6 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
         .brand-text {
             background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
             -webkit-background-clip: text;
@@ -66,10 +60,8 @@
 </head>
 <body class="bg-[#f8fafc] min-h-screen text-slate-900">
 
-    
-
     <!-- MAIN APP -->
-    <div id="main-app" class="hidden">
+    <div id="main-app" class="animate-fade">
         <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
             <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-4 group">
@@ -89,11 +81,6 @@
                         <span class="text-[8px] uppercase text-slate-400 font-black">Yenilənmə</span>
                         <span id="last-update" class="text-xs font-bold text-slate-700 tracking-tight">...</span>
                     </div>
-                    <button onclick="logout()" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="Çıxış">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                    </button>
                 </div>
             </div>
 
@@ -142,63 +129,6 @@
     </div>
 
     <script>
-        // --- SIMPLE AUTH LOGIC ---
-        const MASTER_PASS = "22333"; // Тот самый пароль
-        const STORAGE_KEY = "tnd_portal_auth";
-        const SESSION_KEY = "tnd_portal_session";
-
-        function checkAuth() {
-            // Проверка текущей сессии
-            if (sessionStorage.getItem(SESSION_KEY)) {
-                showApp();
-                return;
-            }
-
-            // Проверка сохраненного входа
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                const data = JSON.parse(saved);
-                if (Date.now() - data.time < 24 * 60 * 60 * 1000) {
-                    showApp();
-                    return;
-                }
-                localStorage.removeItem(STORAGE_KEY);
-            }
-
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const passInput = document.getElementById('passInput');
-            const err = document.getElementById('loginError');
-            
-            // Прямое сравнение без хеширования для надежности
-            if (passInput.value.trim() === MASTER_PASS) {
-                sessionStorage.setItem(SESSION_KEY, "true");
-                if (document.getElementById('rememberMe').checked) {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify({time: Date.now()}));
-                }
-                showApp();
-            } else {
-                err.classList.remove('hidden');
-                setTimeout(() => err.classList.add('hidden'), 2000);
-                passInput.value = '';
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem(STORAGE_KEY);
-            sessionStorage.removeItem(SESSION_KEY);
-            location.reload();
-        }
-
-        function showApp() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            initPortal();
-        }
-
         // --- PORTAL DATA LOGIC ---
         let rawHeaders = [], currentData = [], filteredData = [], activeTab = 'yanacaq', currentPage = 1;
         const rowsPerPage = 50;
@@ -348,9 +278,7 @@
         function clearDayFilter() { document.getElementById('dayStart').value = ''; document.getElementById('dayEnd').value = ''; applyAllFilters(true); }
 
         window.onresize = updateTabIndicator;
-        window.onload = checkAuth;
+        window.onload = initPortal;
     </script>
 </body>
 </html>
-
-
