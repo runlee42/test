@@ -215,6 +215,16 @@
             } catch (e) { el.textContent = '—'; }
         }
 
+        /**
+         * Rəqəmləri vergül formatına çevirir (məs: 12.50 -> 12,50)
+         */
+        function formatToComma(value) {
+            if (value === null || value === undefined || value === '') return '';
+            const num = parseFloat(String(value).replace(',', '.'));
+            if (isNaN(num)) return value;
+            return num.toFixed(2).replace('.', ',');
+        }
+
         function switchTab(tab) {
             activeTab = tab;
             const btns = { 'yanacaq': document.getElementById('btn-yanacaq'), 'gps': document.getElementById('btn-gps') };
@@ -333,11 +343,10 @@
                     totalAzn += parseFloat(String(row[aznIdx]).replace(',', '.')) || 0;
                     totalLit += parseFloat(String(row[litIdx]).replace(',', '.')) || 0;
                 });
-                container.innerHTML = createStatCard('Məbləğ', totalAzn.toFixed(2), '₼', 'border-emerald-500') +
-                                     createStatCard('Yanacaq', totalLit.toFixed(2), 'L', 'border-blue-500') +
+                container.innerHTML = createStatCard('Məbləğ', formatToComma(totalAzn), '₼', 'border-emerald-500') +
+                                     createStatCard('Yanacaq', formatToComma(totalLit), 'L', 'border-blue-500') +
                                      createStatCard('Sayı', data.length, 'ədəd', 'border-amber-500');
             } else {
-                // GPS Statistikası
                 let totalKm = 0;
                 let totalMoto = 0;
                 const kmIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'km' || h.toLowerCase().includes('məsafə'));
@@ -349,8 +358,8 @@
                 });
 
                 container.innerHTML = createStatCard('Sayı', data.length, 'ədəd', 'border-slate-500') +
-                                     createStatCard('Cəmi KM', totalKm.toFixed(2), 'KM', 'border-indigo-500') +
-                                     createStatCard('Cəmi Moto', totalMoto.toFixed(2), 'Saat', 'border-orange-500');
+                                     createStatCard('Cəmi KM', formatToComma(totalKm), 'KM', 'border-indigo-500') +
+                                     createStatCard('Cəmi Moto', formatToComma(totalMoto), 'Saat', 'border-orange-500');
             }
         }
 
@@ -376,7 +385,15 @@
                     if (i < rawHeaders.length) {
                         const td = document.createElement('td');
                         td.className = 'px-4 py-3 text-[11px] border-b border-r border-slate-100 whitespace-nowrap';
-                        td.textContent = cell;
+                        
+                        const header = rawHeaders[i].toLowerCase();
+                        // Format numbers with comma for specific columns
+                        if (header.includes('lit') || header.includes('azn') || header.includes('miqdar') || header.includes('məbləğ') || header === 'km' || header === 'moto') {
+                            td.textContent = formatToComma(cell);
+                        } else {
+                            td.textContent = cell;
+                        }
+                        
                         tr.appendChild(td);
                     }
                 });
