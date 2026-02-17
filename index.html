@@ -102,7 +102,7 @@
 
                     <button type="submit" id="loginBtn"
                         class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]">
-                        <span id="loginBtnText">Daxil Ol</span>
+                        Daxil Ol
                     </button>
                 </form>
             </div>
@@ -183,26 +183,19 @@
     </div>
 
     <script>
-        // --- SECURE AUTH WITH HASHING ---
-        // Хеш для пароля "22333" (SHA-256)
-        const HASHED_KEY = "94738435d8486f9f688849788a183e895c3459c3621404e90838186253907c16";
+        // --- SIMPLE AUTH LOGIC ---
+        const MASTER_PASS = "22333"; // Тот самый пароль
         const STORAGE_KEY = "tnd_portal_auth";
         const SESSION_KEY = "tnd_portal_session";
 
-        // Функция хеширования
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function checkAuth() {
+        function checkAuth() {
+            // Проверка текущей сессии
             if (sessionStorage.getItem(SESSION_KEY)) {
                 showApp();
                 return;
             }
 
+            // Проверка сохраненного входа
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const data = JSON.parse(saved);
@@ -216,35 +209,22 @@
             document.getElementById('login-screen').classList.remove('hidden');
         }
 
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            const btn = document.getElementById('loginBtn');
-            const btnText = document.getElementById('loginBtnText');
             const passInput = document.getElementById('passInput');
             const err = document.getElementById('loginError');
             
-            // Визуальный фидбек
-            btn.disabled = true;
-            btnText.textContent = "Yoxlanılır...";
-
-            try {
-                const inputHash = await sha256(passInput.value.trim());
-                
-                if (inputHash === HASHED_KEY) {
-                    sessionStorage.setItem(SESSION_KEY, "true");
-                    if (document.getElementById('rememberMe').checked) {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify({time: Date.now()}));
-                    }
-                    showApp();
-                } else {
-                    throw new Error("Wrong password");
+            // Прямое сравнение без хеширования для надежности
+            if (passInput.value.trim() === MASTER_PASS) {
+                sessionStorage.setItem(SESSION_KEY, "true");
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify({time: Date.now()}));
                 }
-            } catch (error) {
+                showApp();
+            } else {
                 err.classList.remove('hidden');
-                setTimeout(() => err.classList.add('hidden'), 2500);
+                setTimeout(() => err.classList.add('hidden'), 2000);
                 passInput.value = '';
-                btn.disabled = false;
-                btnText.textContent = "Daxil Ol";
             }
         }
 
@@ -260,7 +240,7 @@
             initPortal();
         }
 
-        // --- REST OF THE PORTAL LOGIC ---
+        // --- PORTAL DATA LOGIC ---
         let rawHeaders = [], currentData = [], filteredData = [], activeTab = 'yanacaq', currentPage = 1;
         const rowsPerPage = 50;
 
