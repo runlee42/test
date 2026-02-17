@@ -21,18 +21,17 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Glass effect for login */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         .brand-text {
@@ -41,22 +40,11 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .logo-container:hover .logo-icon {
-            transform: scale(1.1) rotate(8deg);
-            filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.6));
-            background-color: #1d4ed8;
-        }
-
         .logo-icon {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 4px rgba(37, 99, 235, 0.2));
         }
 
-        .tab-button {
-            position: relative;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
         .tab-underline {
             position: absolute;
             bottom: 0;
@@ -74,100 +62,78 @@
             min-height: 400px;
         }
 
-        tr:nth-child(even) { background-color: #fcfcfc; }
-
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen text-slate-900 overflow-x-hidden">
+<body class="bg-[#f8fafc] min-h-screen text-slate-900">
 
     <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-100 flex items-center justify-center p-6 hidden">
-        <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(#2563eb 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-50 flex items-center justify-center p-6">
+        <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(#2563eb 0.5px, transparent 0.5px); background-size: 30px 30px;"></div>
         
-        <div class="w-full max-w-[420px] relative animate-fade">
-            <!-- Brand Mark -->
-            <div class="flex justify-center mb-8">
-                <div class="bg-blue-600 p-5 rounded-[2rem] shadow-2xl shadow-blue-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-            </div>
-
-            <div class="glass-panel p-10 rounded-[2.5rem] shadow-xl border border-white">
-                <div class="text-center mb-10">
-                    <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">Sistemə Giriş</h1>
-                    <p class="text-slate-500 text-xs mt-2 font-bold uppercase tracking-widest">2 Saylı TND Analitika Portalı</p>
+        <div class="w-full max-w-[400px] relative animate-fade">
+            <div class="glass-panel p-8 rounded-[2rem] shadow-2xl border border-white">
+                <div class="text-center mb-8">
+                    <div class="inline-flex bg-blue-600 p-4 rounded-2xl shadow-lg mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-black text-slate-800 tracking-tight uppercase">Giriş Tələb Olunur</h1>
+                    <p class="text-slate-500 text-[10px] mt-1 font-bold uppercase tracking-widest">TND Analitika Portalı</p>
                 </div>
 
-                <form onsubmit="handleLogin(event)" class="space-y-6">
+                <form onsubmit="handleLogin(event)" class="space-y-5">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Giriş Şifrəsi</label>
+                        <label class="text-[9px] font-black text-slate-400 uppercase ml-1 tracking-widest">Şifrəni daxil edin</label>
                         <input type="password" id="passInput" required placeholder="••••••••"
-                            class="w-full px-5 py-4 bg-white/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:outline-none transition-all text-center tracking-[0.3em] font-bold">
+                            class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:outline-none transition-all text-center tracking-[0.3em] font-bold">
                     </div>
 
-                    <div class="flex items-center justify-between px-1">
+                    <div class="flex items-center px-1">
                         <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="checkbox" id="rememberMe" class="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
-                            <span class="text-xs font-bold text-slate-500 group-hover:text-slate-700 transition-colors uppercase tracking-tighter">24 saat xatırla</span>
+                            <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
+                            <span class="text-[10px] font-bold text-slate-500 group-hover:text-slate-700 transition-colors uppercase tracking-tight">Cihazı xatırla (24 saat)</span>
                         </label>
                     </div>
 
-                    <div id="loginError" class="hidden py-3 px-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-black text-center uppercase tracking-widest">
+                    <div id="loginError" class="hidden py-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[9px] font-black text-center uppercase tracking-widest">
                         Yanlış Şifrə!
                     </div>
 
                     <button type="submit" 
-                        class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]">
+                        class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]">
                         Daxil Ol
                     </button>
                 </form>
             </div>
-            
-            <p class="text-center mt-10 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">
-                &copy; 2024 TND ANALİTİKA SİSTEMİ
-            </p>
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
+    <!-- MAIN APP -->
     <div id="main-app" class="hidden">
-        <!-- Header -->
         <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
             <div class="max-w-full mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-4 logo-container cursor-pointer group">
-                    <div class="logo-icon bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-200">
+                <div class="flex items-center gap-4 group">
+                    <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-xl md:text-2xl font-black uppercase tracking-tight brand-text">
-                            2 saylı TND <span class="font-light text-slate-400">YSMŞ</span>
-                        </h1>
-                        <div class="flex items-center gap-2">
-                            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Məlumat Analizi Portalı</p>
-                        </div>
+                        <h1 class="text-xl md:text-2xl font-black uppercase tracking-tight brand-text">2 saylı TND YSMŞ</h1>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">Məlumat Analizi Portalı</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-4">
                     <div class="bg-slate-50 px-4 py-2 rounded-lg border border-slate-100 flex flex-col items-end">
-                        <span class="text-[9px] uppercase text-slate-400 font-black tracking-tighter">Yenilənmə Tarixi</span>
-                        <span id="last-update" class="text-sm font-bold text-slate-700">Yüklənir...</span>
+                        <span class="text-[8px] uppercase text-slate-400 font-black">Yenilənmə</span>
+                        <span id="last-update" class="text-xs font-bold text-slate-700 tracking-tight">...</span>
                     </div>
                     <button onclick="logout()" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="Çıxış">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -178,146 +144,115 @@
             </div>
 
             <nav class="flex justify-center border-t border-slate-100 relative">
-                <div class="flex relative overflow-x-auto no-scrollbar">
-                    <button onclick="switchTab('yanacaq')" id="btn-yanacaq" class="tab-button px-8 md:px-12 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 whitespace-nowrap">
-                        Yanacaq
-                    </button>
-                    <button onclick="switchTab('gps')" id="btn-gps" class="tab-button px-8 md:px-12 py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 whitespace-nowrap">
-                        GPS
-                    </button>
-                    <div id="tab-indicator" class="tab-underline"></div>
-                </div>
+                <button onclick="switchTab('yanacaq')" id="btn-yanacaq" class="px-8 md:px-12 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors">Yanacaq</button>
+                <button onclick="switchTab('gps')" id="btn-gps" class="px-8 md:px-12 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-colors">GPS</button>
+                <div id="tab-indicator" class="tab-underline"></div>
             </nav>
         </header>
 
-        <main class="max-w-full mx-auto px-4 md:px-6 py-8 animate-fade">
-            <div id="statsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8"></div>
+        <main class="max-w-full mx-auto px-4 md:px-6 py-8">
+            <div id="statsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"></div>
 
-            <div class="mb-6 flex flex-col gap-4">
-                <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
-                    <div class="relative flex-grow lg:max-w-xl">
-                        <input type="text" id="globalSearch" placeholder="Axtarış..." 
-                            class="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:outline-none shadow-sm transition-all text-sm"
-                            onkeyup="applyAllFilters(true)">
-                        <div class="absolute left-4 top-4 text-slate-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
+            <div class="mb-6 flex flex-col lg:flex-row justify-between gap-4">
+                <div class="relative flex-grow lg:max-w-xl">
+                    <input type="text" id="globalSearch" placeholder="Axtarış..." 
+                        class="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl focus:border-blue-500 focus:outline-none shadow-sm text-sm"
+                        onkeyup="applyAllFilters(true)">
+                    <div class="absolute left-4 top-4 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </div>
-
-                    <div class="flex flex-col sm:flex-row gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm items-center">
-                        <div class="flex items-center gap-2 px-2">
-                            <span class="text-[9px] font-black text-slate-400 uppercase whitespace-nowrap">Gün axtarışı:</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 w-full sm:w-32">
-                            <input type="number" id="dayStart" min="1" max="31" placeholder="İlk" oninput="applyAllFilters(true)" 
-                                class="px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none w-full text-center">
-                            <input type="number" id="dayEnd" min="1" max="31" placeholder="Son" oninput="applyAllFilters(true)" 
-                                class="px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold focus:ring-2 focus:ring-blue-500/20 focus:outline-none w-full text-center">
-                        </div>
-                        <button onclick="clearDayFilter()" class="hidden sm:flex p-2 text-slate-300 hover:text-red-500 transition-colors" title="Sıfırla">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <button onclick="refreshCurrentTab()" class="flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357-2H15" />
-                        </svg>
-                        Yenilə
-                    </button>
                 </div>
+
+                <div class="flex gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm items-center">
+                    <span class="text-[9px] font-black text-slate-400 uppercase px-2">Gün:</span>
+                    <input type="number" id="dayStart" min="1" max="31" placeholder="İlk" oninput="applyAllFilters(true)" class="w-16 px-2 py-2 bg-slate-50 border rounded-xl text-xs font-bold text-center">
+                    <input type="number" id="dayEnd" min="1" max="31" placeholder="Son" oninput="applyAllFilters(true)" class="w-16 px-2 py-2 bg-slate-50 border rounded-xl text-xs font-bold text-center">
+                    <button onclick="clearDayFilter()" class="p-2 text-slate-300 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+
+                <button onclick="refreshCurrentTab()" class="px-8 py-3.5 bg-blue-600 text-white rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-all">Yenilə</button>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden flex flex-col">
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
                 <div class="overflow-auto table-container" id="tableScrollArea">
                     <table class="w-full border-separate border-spacing-0" id="dataTable">
                         <thead id="tableHeader"></thead>
                         <tbody id="tableBody" class="text-slate-600"></tbody>
                     </table>
-                    <div id="loader" class="hidden py-32 text-center">
-                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-[3px] border-blue-600 border-t-transparent"></div>
-                    </div>
-                    <div id="emptyState" class="hidden py-32 text-center">
-                        <p class="text-slate-400 font-medium italic">Məlumat tapılmadı</p>
-                    </div>
+                    <div id="loader" class="hidden py-32 text-center"><div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div></div>
+                    <div id="emptyState" class="hidden py-32 text-center text-slate-400 italic">Məlumat tapılmadı</div>
                 </div>
-                <div id="paginationContainer" class="px-8 py-5 bg-slate-50 border-t border-slate-100"></div>
+                <div id="paginationContainer" class="px-8 py-4 bg-slate-50 border-t"></div>
             </div>
         </main>
     </div>
 
     <script>
-        // --- AUTH SYSTEM ---
-        const MASTER_KEY = "12345"; // Ваш пароль
-        const AUTH_KEY = "tnd_session_active";
-        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+        // --- SECURE AUTH ---
+        const MASTER_KEY = "12345";
+        const STORAGE_KEY = "tnd_portal_auth";
+        const SESSION_KEY = "tnd_portal_session";
 
         function checkAuth() {
-            const loginScr = document.getElementById('login-screen');
-            const mainApp = document.getElementById('main-app');
-            
-            // Check persistence
-            const saved = localStorage.getItem(AUTH_KEY);
-            if (saved) {
-                const session = JSON.parse(saved);
-                if (Date.now() - session.time < SESSION_DURATION) {
-                    initApp();
-                    return;
-                } else {
-                    localStorage.removeItem(AUTH_KEY);
-                }
-            }
-
-            // Check tab session
-            if (sessionStorage.getItem(AUTH_KEY)) {
-                initApp();
+            // Если в этой вкладке уже входили — пускаем (sessionStorage сбрасывается при F5/закрытии)
+            if (sessionStorage.getItem(SESSION_KEY)) {
+                showApp();
                 return;
             }
 
-            loginScr.classList.remove('hidden');
-            mainApp.classList.add('hidden');
+            // Если была нажата "Запомнить", проверяем время
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (Date.now() - data.time < 24 * 60 * 60 * 1000) {
+                    showApp();
+                    return;
+                }
+                localStorage.removeItem(STORAGE_KEY);
+            }
+
+            // Иначе — экран логина
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
         }
 
         function handleLogin(e) {
             e.preventDefault();
-            const pass = document.getElementById('passInput').value;
+            const val = document.getElementById('passInput').value;
             const remember = document.getElementById('rememberMe').checked;
             const err = document.getElementById('loginError');
 
-            if (pass === MASTER_KEY) {
+            if (val === MASTER_KEY) {
+                // Всегда ставим сессию для текущей вкладки
+                sessionStorage.setItem(SESSION_KEY, "true");
+                
                 if (remember) {
-                    localStorage.setItem(AUTH_KEY, JSON.stringify({ auth: true, time: Date.now() }));
-                } else {
-                    sessionStorage.setItem(AUTH_KEY, "true");
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify({time: Date.now()}));
                 }
-                initApp();
+                showApp();
             } else {
                 err.classList.remove('hidden');
-                setTimeout(() => err.classList.add('hidden'), 2500);
+                setTimeout(() => err.classList.add('hidden'), 2000);
             }
         }
 
         function logout() {
-            localStorage.removeItem(AUTH_KEY);
-            sessionStorage.removeItem(AUTH_KEY);
+            localStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(SESSION_KEY);
             location.reload();
         }
 
-        // --- APP CORE ---
-        let rawHeaders = [];
-        let currentData = [];
-        let filteredData = [];
-        let activeTab = 'yanacaq';
-        let currentPage = 1;
-        const rowsPerPage = 50;
-
-        function initApp() {
+        function showApp() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
+            initPortal();
+        }
+
+        // --- PORTAL LOGIC ---
+        let rawHeaders = [], currentData = [], filteredData = [], activeTab = 'yanacaq', currentPage = 1;
+        const rowsPerPage = 50;
+
+        function initPortal() {
             updateTabIndicator();
             switchTab('yanacaq');
         }
@@ -325,203 +260,141 @@
         async function fetchLastUpdate() {
             const el = document.getElementById('last-update');
             try {
-                const response = await fetch(`date.txt?t=${Date.now()}`);
-                const text = await response.text();
-                el.textContent = text.trim() || '—';
+                const r = await fetch(`date.txt?t=${Date.now()}`);
+                const t = await r.text();
+                el.textContent = t.trim() || '—';
             } catch (e) { el.textContent = '—'; }
         }
 
-        function formatToComma(value) {
-            if (value === null || value === undefined || value === '') return '';
-            const num = parseFloat(String(value).replace(',', '.'));
-            if (isNaN(num)) return value;
-            return num.toFixed(2).replace('.', ',');
+        function formatToComma(v) {
+            if (!v) return '';
+            const n = parseFloat(String(v).replace(',', '.'));
+            return isNaN(n) ? v : n.toFixed(2).replace('.', ',');
         }
 
-        function switchTab(tab) {
-            activeTab = tab;
-            const btns = { 'yanacaq': document.getElementById('btn-yanacaq'), 'gps': document.getElementById('btn-gps') };
-            Object.keys(btns).forEach(k => btns[k].classList.toggle('text-blue-600', k === tab));
-            
+        function switchTab(t) {
+            activeTab = t;
+            document.getElementById('btn-yanacaq').classList.toggle('text-blue-600', t === 'yanacaq');
+            document.getElementById('btn-gps').classList.toggle('text-blue-600', t === 'gps');
             updateTabIndicator();
-            document.getElementById('globalSearch').value = '';
             clearDayFilter();
-            clearTable();
+            document.getElementById('globalSearch').value = '';
             fetchLastUpdate();
-            loadCSVData(tab === 'yanacaq' ? 'yanacaq.csv' : 'gps.csv');
+            loadCSV(t === 'yanacaq' ? 'yanacaq.csv' : 'gps.csv');
         }
 
         function updateTabIndicator() {
-            const activeBtn = document.getElementById(activeTab === 'yanacaq' ? 'btn-yanacaq' : 'btn-gps');
-            const indicator = document.getElementById('tab-indicator');
-            if (activeBtn && indicator) {
-                indicator.style.left = activeBtn.offsetLeft + 'px';
-                indicator.style.width = activeBtn.offsetWidth + 'px';
+            const btn = document.getElementById('btn-' + activeTab);
+            const ind = document.getElementById('tab-indicator');
+            if (btn && ind) {
+                ind.style.left = btn.offsetLeft + 'px';
+                ind.style.width = btn.offsetWidth + 'px';
             }
         }
 
-        function clearDayFilter() {
-            document.getElementById('dayStart').value = '';
-            document.getElementById('dayEnd').value = '';
-            applyAllFilters(true);
-        }
-
-        function clearTable() {
-            rawHeaders = []; currentData = []; filteredData = []; currentPage = 1;
-            document.getElementById('tableHeader').innerHTML = '';
-            document.getElementById('tableBody').innerHTML = '';
-        }
-
-        async function loadCSVData(fileName) {
+        async function loadCSV(f) {
             const loader = document.getElementById('loader');
             loader.classList.remove('hidden');
             try {
-                const response = await fetch(`${fileName}?t=${Date.now()}`);
-                const text = await response.text();
-                processCSV(text);
-            } catch (e) {
-                console.error(e);
-            } finally { loader.classList.add('hidden'); }
+                const r = await fetch(`${f}?t=${Date.now()}`);
+                const t = await r.text();
+                processCSV(t);
+            } catch (e) {} finally { loader.classList.add('hidden'); }
         }
 
         function processCSV(text) {
-            const rows = text.split(/\r?\n/).filter(row => row.trim() !== '');
+            const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
             if (rows.length === 0) return;
-            const delimiter = rows[0].includes(';') ? ';' : ',';
-            rawHeaders = rows[0].split(delimiter).map(h => h.trim());
-            currentData = rows.slice(1).map(row => row.split(delimiter).map(cell => cell.trim()));
+            const d = rows[0].includes(';') ? ';' : ',';
+            rawHeaders = rows[0].split(d).map(h => h.trim());
+            currentData = rows.slice(1).map(r => r.split(d).map(c => c.trim()));
 
-            let titleRow = '<tr class="sticky-header">';
-            let filterRow = '<tr class="filter-header">';
+            let hRow = '<tr class="sticky-header">', fRow = '<tr class="filter-header">';
             rawHeaders.forEach((h, i) => {
-                titleRow += `<th class="px-4 py-3 border-b border-r border-slate-200 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 whitespace-nowrap">${h}</th>`;
-                filterRow += `<th class="px-2 py-2 border-b border-r border-slate-200 bg-slate-50"><input type="text" placeholder=".." class="column-filter w-full px-2 py-1 text-[10px] border border-slate-200 rounded focus:outline-none" data-col="${i}" onkeyup="applyAllFilters(true)"></th>`;
+                hRow += `<th class="px-4 py-3 border-b border-r text-left text-[9px] font-black text-slate-400 uppercase bg-slate-50">${h}</th>`;
+                fRow += `<th class="px-2 py-2 border-b border-r bg-slate-50"><input type="text" placeholder=".." class="column-filter w-full px-2 py-1 text-[10px] border rounded focus:outline-none" data-col="${i}" onkeyup="applyAllFilters(true)"></th>`;
             });
-            document.getElementById('tableHeader').innerHTML = titleRow + '</tr>' + filterRow + '</tr>';
+            document.getElementById('tableHeader').innerHTML = hRow + '</tr>' + fRow + '</tr>';
             applyAllFilters(true);
-        }
-
-        function getDayOnly(dateStr) {
-            if (!dateStr) return null;
-            if (dateStr.includes('.')) {
-                const parts = dateStr.split('.');
-                return parseInt(parts[0]);
-            }
-            const d = new Date(dateStr);
-            return isNaN(d.getTime()) ? null : d.getDate();
         }
 
         function applyAllFilters(reset = false) {
             if (reset) currentPage = 1;
-            const query = document.getElementById('globalSearch').value.toLowerCase();
-            const dayStart = parseInt(document.getElementById('dayStart').value) || null;
-            const dayEnd = parseInt(document.getElementById('dayEnd').value) || null;
-            const colFilters = Array.from(document.querySelectorAll('.column-filter')).map(i => ({
-                idx: parseInt(i.dataset.col),
-                val: i.value.toLowerCase()
-            }));
+            const q = document.getElementById('globalSearch').value.toLowerCase();
+            const dS = parseInt(document.getElementById('dayStart').value) || null;
+            const dE = parseInt(document.getElementById('dayEnd').value) || null;
+            const filters = Array.from(document.querySelectorAll('.column-filter')).map(i => ({idx: parseInt(i.dataset.col), val: i.value.toLowerCase()}));
+            const dIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('tarix') || h.toLowerCase().includes('date'));
 
-            const dateColIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('tarix') || h.toLowerCase().includes('date'));
-
-            filteredData = currentData.filter(row => {
-                const matchGlobal = query === '' || row.some(cell => cell.toLowerCase().includes(query));
-                const matchCols = colFilters.every(f => f.val === '' || (row[f.idx] && row[f.idx].toLowerCase().includes(f.val)));
-                
-                let matchDay = true;
-                if (dateColIdx !== -1 && (dayStart !== null || dayEnd !== null)) {
-                    const rowDay = getDayOnly(row[dateColIdx]);
-                    if (rowDay !== null) {
-                        if (dayStart !== null && rowDay < dayStart) matchDay = false;
-                        if (dayEnd !== null && rowDay > dayEnd) matchDay = false;
-                    } else { matchDay = false; }
+            filteredData = currentData.filter(r => {
+                const mG = q === '' || r.some(c => c.toLowerCase().includes(q));
+                const mC = filters.every(f => f.val === '' || (r[f.idx] && r[f.idx].toLowerCase().includes(f.val)));
+                let mD = true;
+                if (dIdx !== -1 && (dS || dE)) {
+                    const rD = (r[dIdx] && r[dIdx].includes('.')) ? parseInt(r[dIdx].split('.')[0]) : null;
+                    if (rD) {
+                        if (dS && rD < dS) mD = false;
+                        if (dE && rD > dE) mD = false;
+                    } else mD = false;
                 }
-                return matchGlobal && matchCols && matchDay;
+                return mG && mC && mD;
             });
-
-            updateStats(filteredData);
-            renderTable(filteredData);
+            updateStats();
+            renderTable();
         }
 
-        function updateStats(data) {
-            const container = document.getElementById('statsContainer');
+        function updateStats() {
+            const c = document.getElementById('statsContainer');
             if (activeTab === 'yanacaq') {
-                let totalAzn = 0, totalLit = 0;
-                const aznIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('azn') || h.toLowerCase().includes('məbləğ'));
-                const litIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('lit') || h.toLowerCase().includes('miqdar'));
-                data.forEach(row => {
-                    totalAzn += parseFloat(String(row[aznIdx]).replace(',', '.')) || 0;
-                    totalLit += parseFloat(String(row[litIdx]).replace(',', '.')) || 0;
-                });
-                container.innerHTML = createStatCard('Məbləğ', formatToComma(totalAzn), '₼', 'border-emerald-500') +
-                                     createStatCard('Yanacaq', formatToComma(totalLit), 'L', 'border-blue-500') +
-                                     createStatCard('Sayı', data.length, 'ədəd', 'border-amber-500');
+                let a = 0, l = 0;
+                const aIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('azn')), lIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('lit'));
+                filteredData.forEach(r => { a += parseFloat(String(r[aIdx]).replace(',', '.')) || 0; l += parseFloat(String(r[lIdx]).replace(',', '.')) || 0; });
+                c.innerHTML = stat('Məbləğ', formatToComma(a), '₼', 'border-emerald-500') + stat('Yanacaq', formatToComma(l), 'L', 'border-blue-500') + stat('Sayı', filteredData.length, 'ədəd', 'border-amber-500');
             } else {
-                let totalKm = 0, totalMoto = 0;
-                const kmIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'km' || h.toLowerCase().includes('məsafə'));
-                const motoIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'moto' || h.toLowerCase().includes('saat'));
-                data.forEach(row => {
-                    if (kmIdx !== -1) totalKm += parseFloat(String(row[kmIdx]).replace(',', '.')) || 0;
-                    if (motoIdx !== -1) totalMoto += parseFloat(String(row[motoIdx]).replace(',', '.')) || 0;
-                });
-                container.innerHTML = createStatCard('Sayı', data.length, 'ədəd', 'border-slate-500') +
-                                     createStatCard('Cəmi KM', formatToComma(totalKm), 'KM', 'border-indigo-500') +
-                                     createStatCard('Cəmi Moto', formatToComma(totalMoto), 'Saat', 'border-orange-500');
+                let k = 0, m = 0;
+                const kIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'km'), mIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'moto');
+                filteredData.forEach(r => { k += parseFloat(String(r[kIdx]).replace(',', '.')) || 0; m += parseFloat(String(r[mIdx]).replace(',', '.')) || 0; });
+                c.innerHTML = stat('Məsafə', formatToComma(k), 'KM', 'border-indigo-500') + stat('Moto', formatToComma(m), 'Saat', 'border-orange-500') + stat('Sayı', filteredData.length, 'ədəd', 'border-slate-500');
             }
         }
 
-        function createStatCard(label, val, unit, color) {
-            return `<div class="bg-white p-5 rounded-2xl border-b-4 ${color} shadow-sm">
-                <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${label}</h4>
-                <div class="flex items-baseline gap-1"><span class="text-xl font-black text-slate-800">${val}</span><span class="text-[9px] font-bold text-slate-400 uppercase">${unit}</span></div>
-            </div>`;
+        function stat(l, v, u, clr) {
+            return `<div class="bg-white p-5 rounded-2xl border-b-4 ${clr} shadow-sm"><h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${l}</h4><div class="flex items-baseline gap-1"><span class="text-xl font-black text-slate-800">${v}</span><span class="text-[9px] font-bold text-slate-400 uppercase">${u}</span></div></div>`;
         }
 
-        function renderTable(data) {
-            const body = document.getElementById('tableBody');
-            const empty = document.getElementById('emptyState');
-            body.innerHTML = '';
-            if (data.length === 0) { empty.classList.remove('hidden'); document.getElementById('paginationContainer').innerHTML = ''; return; }
-            empty.classList.add('hidden');
-
-            const start = (currentPage - 1) * rowsPerPage;
-            data.slice(start, start + rowsPerPage).forEach(row => {
+        function renderTable() {
+            const b = document.getElementById('tableBody'), e = document.getElementById('emptyState');
+            b.innerHTML = ''; e.classList.toggle('hidden', filteredData.length > 0);
+            if (filteredData.length === 0) { document.getElementById('paginationContainer').innerHTML = ''; return; }
+            const s = (currentPage - 1) * rowsPerPage;
+            filteredData.slice(s, s + rowsPerPage).forEach(r => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-blue-50/30';
-                row.forEach((cell, i) => {
+                r.forEach((c, i) => {
                     if (i < rawHeaders.length) {
-                        const td = document.createElement('td');
-                        td.className = 'px-4 py-3 text-[11px] border-b border-r border-slate-100 whitespace-nowrap';
-                        const header = rawHeaders[i].toLowerCase();
-                        if (header.includes('lit') || header.includes('azn') || header.includes('miqdar') || header.includes('məbləğ') || header === 'km' || header === 'moto') {
-                            td.textContent = formatToComma(cell);
-                        } else { td.textContent = cell; }
+                        const td = document.createElement('td'), h = rawHeaders[i].toLowerCase();
+                        td.className = 'px-4 py-3 text-[11px] border-b border-r whitespace-nowrap';
+                        td.textContent = (h.includes('lit') || h.includes('azn') || h === 'km' || h === 'moto') ? formatToComma(c) : c;
                         tr.appendChild(td);
                     }
                 });
-                body.appendChild(tr);
+                b.appendChild(tr);
             });
-            renderPagination(data.length);
+            renderPages();
         }
 
-        function renderPagination(total) {
-            const container = document.getElementById('paginationContainer');
-            if (total <= rowsPerPage) { container.innerHTML = `<span class="text-[10px] font-bold text-slate-400 px-4 uppercase">Toplam: ${total}</span>`; return; }
-            const totalPages = Math.ceil(total / rowsPerPage);
-            container.innerHTML = `
-                <div class="flex justify-between items-center px-4">
-                    <span class="text-[9px] font-black text-slate-400 uppercase">Səhifə ${currentPage}/${totalPages}</span>
-                    <div class="flex gap-1">
-                        <button onclick="changePage(${currentPage-1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1 border border-slate-200 rounded-lg text-[9px] font-bold bg-white disabled:opacity-30">GERİ</button>
-                        <button onclick="changePage(${currentPage+1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1 border border-slate-200 rounded-lg text-[9px] font-bold bg-white disabled:opacity-30">İRƏLİ</button>
-                    </div>
-                </div>`;
+        function renderPages() {
+            const total = filteredData.length, pC = document.getElementById('paginationContainer');
+            if (total <= rowsPerPage) { pC.innerHTML = `<span class="text-[9px] font-bold text-slate-400 px-4 uppercase tracking-widest">Cəmi: ${total}</span>`; return; }
+            const tP = Math.ceil(total / rowsPerPage);
+            pC.innerHTML = `<div class="flex justify-between items-center px-4"><span class="text-[9px] font-bold text-slate-400 uppercase">${currentPage} / ${tP}</span><div class="flex gap-1"><button onclick="changePage(${currentPage-1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1 border rounded text-[9px] font-bold disabled:opacity-30">GERİ</button><button onclick="changePage(${currentPage+1})" ${currentPage === tP ? 'disabled' : ''} class="px-3 py-1 border rounded text-[9px] font-bold disabled:opacity-30">İRƏLİ</button></div></div>`;
         }
 
-        function changePage(p) { currentPage = p; renderTable(filteredData); document.getElementById('tableScrollArea').scrollTop = 0; }
+        function changePage(p) { currentPage = p; renderTable(); document.getElementById('tableScrollArea').scrollTop = 0; }
         function refreshCurrentTab() { switchTab(activeTab); }
-        window.onresize = updateTabIndicator;
+        function clearDayFilter() { document.getElementById('dayStart').value = ''; document.getElementById('dayEnd').value = ''; applyAllFilters(true); }
 
-        // Run security check on load
+        window.onresize = updateTabIndicator;
         window.onload = checkAuth;
     </script>
 </body>
