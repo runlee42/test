@@ -256,18 +256,16 @@
 
     <script>
         // --- SIMPLE AUTH LOGIC ---
-        const MASTER_PASS = "22333"; // Тот самый пароль
+        const MASTER_PASS = "22333";
         const STORAGE_KEY = "tnd_portal_auth";
         const SESSION_KEY = "tnd_portal_session";
 
         function checkAuth() {
-            // Проверка текущей сессии
             if (sessionStorage.getItem(SESSION_KEY)) {
                 showApp();
                 return;
             }
 
-            // Проверка сохраненного входа
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const data = JSON.parse(saved);
@@ -286,7 +284,6 @@
             const passInput = document.getElementById('passInput');
             const err = document.getElementById('loginError');
             
-            // Прямое сравнение без хеширования для надежности
             if (passInput.value.trim() === MASTER_PASS) {
                 sessionStorage.setItem(SESSION_KEY, "true");
                 if (document.getElementById('rememberMe').checked) {
@@ -395,21 +392,42 @@
             const dS = parseInt(document.getElementById('dayStart').value) || null;
             const dE = parseInt(document.getElementById('dayEnd').value) || null;
             const filters = Array.from(document.querySelectorAll('.column-filter')).map(i => ({idx: parseInt(i.dataset.col), val: i.value.toLowerCase()}));
-            const dIdx = rawHeaders.findIndex(h => h.toLowerCase().includes('tarix') || h.toLowerCase().includes('date'));
+            
+            // Tarix sütununun indeksini tapırıq
+            const dIdx = rawHeaders.findIndex(h => {
+                const low = h.toLowerCase();
+                return low.includes('tarix') || low.includes('date');
+            });
 
             filteredData = currentData.filter(r => {
+                // Qlobal search
                 const mG = q === '' || r.some(c => c.toLowerCase().includes(q));
+                
+                // Sütun filtrləri
                 const mC = filters.every(f => f.val === '' || (r[f.idx] && r[f.idx].toLowerCase().includes(f.val)));
+                
+                // Gün/Tarix filtri
                 let mD = true;
                 if (dIdx !== -1 && (dS || dE)) {
-                    const rD = (r[dIdx] && r[dIdx].includes('.')) ? parseInt(r[dIdx].split('.')[0]) : null;
-                    if (rD) {
-                        if (dS && rD < dS) mD = false;
-                        if (dE && rD > dE) mD = false;
-                    } else mD = false;
+                    const dateVal = r[dIdx];
+                    if (dateVal) {
+                        // "DD.MM.YYYY" formatını və ya sadə rəqəmi dəstəkləyirik
+                        const parts = dateVal.split('.');
+                        const rD = parseInt(parts[0]); // Birinci hissə gündür
+                        
+                        if (!isNaN(rD)) {
+                            if (dS && rD < dS) mD = false;
+                            if (dE && rD > dE) mD = false;
+                        } else {
+                            mD = false; 
+                        }
+                    } else {
+                        mD = false;
+                    }
                 }
                 return mG && mC && mD;
             });
+            
             updateStats();
             renderTable();
         }
